@@ -1,4 +1,4 @@
-import { LogOut, Vote, CheckCircle, Clock, Trophy, Users, Building2 } from 'lucide-react';
+import { LogOut, CheckCircle, Clock, Trophy, Users, Building2, Vote } from 'lucide-react';
 import { Election } from '@/lib/types';
 
 type HomePageProps = {
@@ -31,11 +31,11 @@ export function HomePage({
             <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
                 <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Vote className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="/logo.png" alt="VoteFlow Logo" className="w-full h-full object-cover" />
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-slate-900 font-semibold text-sm sm:text-lg truncate">Online Voting System</h1>
+                            <h1 className="text-slate-900 font-semibold text-sm sm:text-lg truncate tracking-tight">VoteFlow</h1>
                             <p className="text-slate-600 text-[10px] sm:text-xs">Welcome, <span className="font-semibold text-indigo-600">{userName}</span></p>
                         </div>
                     </div>

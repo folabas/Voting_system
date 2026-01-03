@@ -8,8 +8,11 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "VoteFlow | Premium Voting System",
-  description: "Next-generation voting platform for real-time decision making.",
+  title: "VoteFlow | Secure Digital Voting System",
+  description: "A premium, secure, and transparent digital voting platform for institutions and organizations. Experience the future of democratic decision-making.",
+  keywords: ["voting", "digital democracy", "secure election", "VoteFlow", "online voting"],
+  authors: [{ name: "VoteFlow Team" }],
+  viewport: "width=device-width, initial-scale=1",
 };
 
 import { AuthProvider } from "@/context/AuthContext";

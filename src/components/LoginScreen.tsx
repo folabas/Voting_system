@@ -1,31 +1,64 @@
 import { useState } from 'react';
-import { User, Mail, Lock, ShieldCheck } from 'lucide-react';
+import { User, Mail, Lock, ShieldCheck, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 type LoginScreenProps = {
-    onLogin: (email: string, password: string) => void;
     onSwitchToRegister: () => void;
 };
 
-export function LoginScreen({ onLogin, onSwitchToRegister }: LoginScreenProps) {
+export function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
+    const { login } = useAuth();
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!email || !password) {
-            setError('Please enter both email and password');
-            return;
-        }
-
-        if (!email.includes('@')) {
-            setError('Please enter a valid email address');
-            return;
-        }
-
         setError('');
-        onLogin(email, password);
+        setFieldErrors({});
+
+        if (!email) {
+            setFieldErrors(prev => ({ ...prev, email: 'Email identity required' }));
+            return;
+        }
+        if (!password) {
+            setFieldErrors(prev => ({ ...prev, password: 'Security password required' }));
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                if (data.error.toLowerCase().includes('password')) {
+                    setFieldErrors({ password: data.error });
+                } else if (data.error.toLowerCase().includes('user') || data.error.toLowerCase().includes('email')) {
+                    setFieldErrors({ email: data.error });
+                } else {
+                    setError(data.error);
+                }
+                return;
+            }
+
+            login(data.user, data.token);
+            router.push(data.user.role === 'admin' ? '/admin' : '/');
+        } catch (err: any) {
+            setError('Connection failed. Please check your network.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -33,10 +66,10 @@ export function LoginScreen({ onLogin, onSwitchToRegister }: LoginScreenProps) {
             <div className="w-full max-w-md">
                 {/* Logo and Header */}
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-600 rounded-[2rem] mb-6 shadow-xl shadow-indigo-100 transform -rotate-6">
-                        <ShieldCheck className="w-10 h-10 text-white" />
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] mb-6 shadow-xl shadow-indigo-100 transform -rotate-6 overflow-hidden">
+                        <img src="/logo.png" alt="VoteFlow Logo" className="w-full h-full object-cover" />
                     </div>
-                    <h1 className="text-slate-900 mb-2 font-semibold text-3xl tracking-tight">DecisiveVote</h1>
+                    <h1 className="text-slate-900 mb-2 font-semibold text-3xl tracking-tight">VoteFlow</h1>
                     <p className="text-slate-500 font-semibold text-xs uppercase tracking-[0.2em]">Secure Digital Democracy</p>
                 </div>
 
@@ -61,26 +94,48 @@ export function LoginScreen({ onLogin, onSwitchToRegister }: LoginScreenProps) {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="e.g. voter@university.edu"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 focus:bg-white transition-all font-medium"
+                                    className={`w-full pl-12 pr-4 py-4 bg-slate-50 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:bg-white transition-all font-medium ${fieldErrors.email ? 'border-red-500 bg-red-50/50' : 'border-slate-50 focus:border-indigo-500'
+                                        }`}
                                 />
+                                {fieldErrors.email && (
+                                    <p className="mt-1.5 text-xs text-red-600 font-semibold flex items-center gap-1.5 pl-1 animate-in fade-in slide-in-from-top-1">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        {fieldErrors.email}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         {/* Password Input */}
                         <div className="space-y-2">
                             <label htmlFor="password" className="block text-slate-800 text-xs font-semibold uppercase tracking-widest pl-1">
-                                Security Terminal
+                                Password
                             </label>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 focus:bg-white transition-all font-medium"
+                                    className={`w-full pl-12 pr-12 py-4 bg-slate-50 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:bg-white transition-all font-medium ${fieldErrors.password ? 'border-red-500 bg-red-50/50' : 'border-slate-50 focus:border-indigo-500'
+                                        }`}
                                 />
+                                <button
+                                    type="button"
+                                    disabled={isLoading}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors disabled:opacity-50"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                                {fieldErrors.password && (
+                                    <p className="mt-1.5 text-xs text-red-600 font-semibold flex items-center gap-1.5 pl-1 animate-in fade-in slide-in-from-top-1">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        {fieldErrors.password}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -97,9 +152,20 @@ export function LoginScreen({ onLogin, onSwitchToRegister }: LoginScreenProps) {
                         {/* Login Button */}
                         <button
                             type="submit"
-                            className="w-full py-4 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all font-semibold text-lg shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transform active:scale-[0.98]"
+                            disabled={isLoading}
+                            className={`w-full py-4 rounded-2xl transition-all font-semibold text-lg shadow-lg transform active:scale-[0.98] flex items-center justify-center gap-2 ${isLoading
+                                ? 'bg-indigo-400 cursor-not-allowed text-white'
+                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200 hover:shadow-indigo-300'
+                                }`}
                         >
-                            Enter Portal
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Processing Authenticity...
+                                </>
+                            ) : (
+                                'Enter Portal'
+                            )}
                         </button>
                     </form>
 

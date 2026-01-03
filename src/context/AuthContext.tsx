@@ -31,6 +31,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
     }, []);
 
+    // Inactivity Logout Logic (3 hours)
+    useEffect(() => {
+        if (!user) return;
+
+        let inactivityTimeout: NodeJS.Timeout;
+        const INACTIVITY_LIMIT = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+
+        const resetTimer = () => {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = setTimeout(() => {
+                console.log('Inactivity limit reached. Logging out...');
+                logout();
+            }, INACTIVITY_LIMIT);
+        };
+
+        const events = ['mousedown', 'keydown', 'touchstart', 'scroll', 'mousemove'];
+        events.forEach(event => document.addEventListener(event, resetTimer));
+
+        resetTimer(); // Initialize timer
+
+        return () => {
+            clearTimeout(inactivityTimeout);
+            events.forEach(event => document.removeEventListener(event, resetTimer));
+        };
+    }, [user]);
+
     const login = (userData: User, userToken: string) => {
         setUser(userData);
         setToken(userToken);

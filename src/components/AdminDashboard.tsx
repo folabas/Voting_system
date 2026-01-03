@@ -184,11 +184,11 @@ export function AdminDashboard({
                 <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="/logo.png" alt="VoteFlow Logo" className="w-full h-full object-cover" />
                             </div>
                             <div className="min-w-0">
-                                <h1 className="text-slate-900 font-semibold text-sm sm:text-xl truncate">Admin Console</h1>
+                                <h1 className="text-slate-900 font-semibold text-sm sm:text-xl truncate tracking-tight">VoteFlow Admin</h1>
                                 <p className="text-slate-500 text-[10px] sm:text-sm truncate">Management System</p>
                             </div>
                         </div>

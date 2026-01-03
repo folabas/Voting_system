@@ -1,4 +1,4 @@
-import { LogOut, Vote, Info, ArrowLeft, Building2 } from 'lucide-react';
+import { LogOut, Info, ArrowLeft, Building2 } from 'lucide-react';
 import { Election, Candidate } from '@/lib/types';
 
 type VotingDashboardProps = {
@@ -33,11 +33,11 @@ export function VotingDashboard({
                             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                             <span className="inline">Go to Home</span>
                         </button>
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Vote className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="/logo.png" alt="VoteFlow Logo" className="w-full h-full object-cover" />
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-slate-900 font-semibold text-sm sm:text-base truncate">Voting Portal</h1>
+                            <h1 className="text-slate-900 font-semibold text-sm sm:text-base truncate tracking-tight">VoteFlow Portal</h1>
                             <p className="text-slate-600 text-[10px] sm:text-sm truncate">User: {userName}</p>
                         </div>
                     </div>
