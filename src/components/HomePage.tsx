@@ -6,7 +6,7 @@ type HomePageProps = {
     onSelectElection: (election: Election) => void;
     onLogout: () => void;
     userName: string;
-    getUserVotingStatus: (electionId: string) => boolean;
+    getUserVotingStatus: (election: Election) => boolean;
 };
 
 export function HomePage({
@@ -18,7 +18,7 @@ export function HomePage({
 }: HomePageProps) {
     const getElectionStats = () => {
         const total = elections.length;
-        const voted = elections.filter(e => getUserVotingStatus(e._id || e.id || '')).length;
+        const voted = elections.filter(e => getUserVotingStatus(e)).length;
         const pending = total - voted;
         return { total, voted, pending };
     };
@@ -101,7 +101,7 @@ export function HomePage({
                 {/* Elections Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {elections.map((election) => {
-                        const hasVoted = getUserVotingStatus(election._id || election.id || '');
+                        const hasVoted = getUserVotingStatus(election);
                         const totalVotes = election.candidates.reduce((sum, c) => sum + c.votes, 0);
                         const leader = election.candidates.reduce((prev, current) =>
                             (current.votes > (prev?.votes || 0)) ? current : prev,

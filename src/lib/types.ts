@@ -26,4 +26,5 @@ export type Election = {
     faculty?: string;
     isOpen: boolean;
     candidates: Candidate[];
+    hasVoted?: boolean;
 };

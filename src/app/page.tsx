@@ -13,7 +13,12 @@ export default function RootPage() {
 
   const fetchElections = useCallback(async () => {
     try {
-      const response = await fetch('/api/elections');
+      const token = localStorage.getItem('token');
+      // Adding cache: 'no-store' to ensure mobile browsers don't serve stale voting status
+      const response = await fetch('/api/elections', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        cache: 'no-store'
+      });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
       setElections(data);
@@ -35,19 +40,23 @@ export default function RootPage() {
   }, [user, isLoading, router, fetchElections]);
 
   const handleSelectElection = (election: Election) => {
-    const id = election._id || election.id;
-    const hasVoted = localStorage.getItem(`voted_${user?.id || user?._id}_${id}`) === 'true';
+    const electionId = (election._id || election.id || '').toString();
+    const hasVoted = getUserVotingStatus(election);
 
     if (hasVoted) {
-      router.push(`/results/${id}`);
+      router.push(`/results/${electionId}`);
     } else {
-      router.push(`/vote/${id}`);
+      router.push(`/vote/${electionId}`);
     }
   };
 
-  const getUserVotingStatus = (electionId: string): boolean => {
+  const getUserVotingStatus = (election: Election): boolean => {
     if (!user) return false;
-    return localStorage.getItem(`voted_${user.id || user._id}_${electionId}`) === 'true';
+    const electionId = (election._id || election.id || '').toString();
+    const userId = (user.id || user._id || '').toString();
+
+    // Check both verified API status and local fallback
+    return election.hasVoted === true || localStorage.getItem(`voted_${userId}_${electionId}`) === 'true';
   };
 
   if (isLoading || !user || user.role === 'admin') {

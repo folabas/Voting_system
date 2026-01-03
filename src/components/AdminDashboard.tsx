@@ -180,32 +180,32 @@ export function AdminDashboard({
     return (
         <div className="min-h-screen bg-slate-50">
             {/* Header */}
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
+            <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="flex items-center gap-2.5 sm:gap-4">
+                            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-slate-100 transform rotate-3">
                                 <img src="/logo.png" alt="VoteFlow Logo" className="w-full h-full object-cover" />
                             </div>
                             <div className="min-w-0">
-                                <h1 className="text-slate-900 font-semibold text-sm sm:text-xl truncate tracking-tight">VoteFlow Admin</h1>
-                                <p className="text-slate-500 text-[10px] sm:text-sm truncate">Management System</p>
+                                <h1 className="text-slate-900 font-bold text-base sm:text-2xl tracking-tight leading-none">VoteFlow Admin</h1>
+                                <p className="text-slate-500 text-[10px] sm:text-xs font-medium uppercase tracking-widest mt-0.5 hidden sm:block">System Controller</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-2 sm:gap-4">
                             <button
                                 onClick={() => setShowCreateModal(true)}
-                                className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-md font-semibold text-xs sm:text-sm"
+                                className="flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95 font-bold text-xs sm:text-sm"
                             >
-                                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                <span className="inline">Add Election</span>
+                                <Plus className="w-4 h-4" />
+                                <span className="hidden sm:inline">Add Election</span>
                             </button>
                             <button
                                 onClick={onLogout}
-                                className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition text-xs sm:text-sm font-medium"
+                                className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all active:scale-95 text-xs sm:text-sm font-bold border border-transparent hover:border-red-100"
                             >
-                                <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                <span className="inline">Logout</span>
+                                <LogOut className="w-4 h-4" />
+                                <span className="hidden sm:inline">Logout</span>
                             </button>
                         </div>
                     </div>
